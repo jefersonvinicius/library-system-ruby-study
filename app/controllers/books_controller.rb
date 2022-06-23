@@ -1,6 +1,8 @@
 class BooksController < ApplicationController
+  
   def create
     @book = Book.new(book_params)
+    @book.images.attach(params[:images])
 
     if @book.save
       render json: {book: @book}
@@ -11,6 +13,6 @@ class BooksController < ApplicationController
 
   private 
     def book_params
-      params.require(:book).permit(:title, :description, :released_at, :edition)
+      params.permit(:title, :description, :released_at, :edition, :images)
     end
 end
