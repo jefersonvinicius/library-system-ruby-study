@@ -23,5 +23,7 @@ module LibrarySystemRubyStudy
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    routes.default_url_options = {host: 'localhost:3000'}
   end
 end

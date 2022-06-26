@@ -1,17 +1,17 @@
-class BooksController < ApplicationController
-  
-  PER_PAGE = 5
+class BooksController < BaseController
 
   def index
     @page = params.fetch(:page, 1).to_i
     @all_books_count = Book.count
     @books = Book.offset((@page - 1) * PER_PAGE).limit(PER_PAGE)
 
-    # @books.each { |book| book.image = url_for(book.images) }
-    # puts @images
-    
-    @meta = make_meta(@all_books_count, @page)
-    render json: {books: @books, meta: @meta}
+    @images = Hash.new
+    @books.each { |book| 
+      @images.merge!("#{book.id}": book.images.map { |image| url_for(image)}) if book.images.attached?
+    }
+
+    @meta = make_meta total_records: @all_books_count, page: @page
+    render json: {books: @books, images: @images, meta: @meta}
   end
 
   def create
@@ -28,14 +28,5 @@ class BooksController < ApplicationController
   private 
     def book_params
       params.permit(:title, :description, :released_at, :edition, :images)
-    end
-
-    def make_meta(total_records, page)
-      @total_pages = (total_records / PER_PAGE).ceil + 1
-      return {
-        first_page: [0, 1].include?(page),
-        last_page: page >= @total_pages,
-        total_pages: @total_pages,
-      }
     end
 end
