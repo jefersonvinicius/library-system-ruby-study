@@ -21,4 +21,10 @@ class BaseController < ApplicationController
   def offset
     (current_page - 1) * PER_PAGE
   end
+
+  def render_not_found(args = nil)
+    data = args.nil? ? nil : args.map{ |k,v| "#{k} = #{v}"}.join(", ")
+    message = data.nil? ? "Model not found" : "Not found author with #{data}" 
+    render json: {message: message}, status: :not_found
+  end
 end

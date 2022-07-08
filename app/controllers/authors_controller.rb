@@ -9,6 +9,8 @@ class AuthorsController < BaseController
 
   def show
     @author = Author.find_by id: params[:id]
+    return render_not_found id: params[:id] if @author.nil? 
+
     render json: {author: AuthorModelView.new(@author).view}
   end
 
@@ -18,14 +20,21 @@ class AuthorsController < BaseController
     @author.books = books
 
     if @author.save
-      render json: {author: @author}
+      render json: {author: AuthorModelView.new(@author).view}
     else
       render status: :unprocessable_entity
     end
   end
 
   def update
+    @author = Author.find_by id: params[:id]    
+    return render_not_found id: params[:id] if @author.nil? 
 
+    if @author.update(edition_params)
+      render json: {author: AuthorModelView.new(@author).view}
+    else
+      render status: :unprocessable_entity
+    end
   end
 
   private 
@@ -34,7 +43,7 @@ class AuthorsController < BaseController
     end
 
     def edition_params
-      
+      author_params
     end
 
     def creation_params
