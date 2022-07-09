@@ -5,7 +5,11 @@ class AuthorModelView
         @author = author
     end
 
-    def view
+    def self.render(author)
+        new(author).parse
+    end
+
+    def parse
         @author.as_json(include: [:books]).tap do |result|
             result[:images] = images
         end

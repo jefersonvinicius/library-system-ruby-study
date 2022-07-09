@@ -4,14 +4,14 @@ class AuthorsController < BaseController
     @authors = Author.includes(:books).offset(offset).limit(PER_PAGE).with_attached_images
 
     @meta = make_meta total_records: @all_authors_count
-    render json: {authors: AuthorsModelView.new(@authors).view, meta: @meta}
+    render json: {authors: AuthorsModelView.render(@authors), meta: @meta}
   end
 
   def show
     @author = Author.find_by id: params[:id]
     return render_not_found id: params[:id] if @author.nil? 
 
-    render json: {author: AuthorModelView.new(@author).view}
+    render json: {author: AuthorModelView.render(@author)}
   end
 
   def create
@@ -20,7 +20,7 @@ class AuthorsController < BaseController
     @author.books = books
 
     if @author.save
-      render json: {author: AuthorModelView.new(@author).view}
+      render json: {author: AuthorModelView.render(@author)}
     else
       render status: :unprocessable_entity
     end
@@ -31,7 +31,7 @@ class AuthorsController < BaseController
     return render_not_found id: params[:id] if @author.nil? 
 
     if @author.update(edition_params)
-      render json: {author: AuthorModelView.new(@author).view}
+      render json: {author: AuthorModelView.render(@author)}
     else
       render status: :unprocessable_entity
     end

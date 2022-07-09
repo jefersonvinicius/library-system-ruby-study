@@ -3,7 +3,11 @@ class AuthorsModelView
         @authors = authors
     end
 
-    def view
-        @authors.map { |author| AuthorModelView.new(author).view }
+    def self.render(authors)
+        new(authors).parse
+    end
+
+    def parse
+        @authors.map { |author| AuthorModelView.render(author) }
     end
 end
