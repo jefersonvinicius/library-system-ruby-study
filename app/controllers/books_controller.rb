@@ -3,15 +3,10 @@ class BooksController < BaseController
   def index
     @page = params.fetch(:page, 1).to_i
     @all_books_count = Book.count
-    @books = Book.offset((@page - 1) * PER_PAGE).limit(PER_PAGE)
+    @books = Book.includes(:authors).offset(offset).limit(PER_PAGE).with_attached_images
 
-    @images = Hash.new
-    @books.each { |book| 
-      @images.merge!("#{book.id}": book.images.map { |image| url_for(image)}) if book.images.attached?
-    }
-
-    @meta = make_meta total_records: @all_books_count, page: @page
-    render json: {books: @books, images: @images, meta: @meta}
+    @meta = make_meta total_records: @all_books_count
+    render json: {books: BooksModelView.render(@books), meta: @meta}
   end
 
   def create
