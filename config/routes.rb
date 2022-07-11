@@ -13,6 +13,8 @@ Rails.application.routes.draw do
       get 'authors/:id', to: 'authors#show'
       post 'authors', to: 'authors#create'
       put 'authors/:id', to: 'authors#update'
+      delete 'authors/:id/books/:book_id', to: 'authors#detach_book'
+      post 'authors/:id/books/:book_id', to: 'authors#attach_book'
     end
   end
 end

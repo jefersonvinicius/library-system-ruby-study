@@ -1,4 +1,7 @@
 class AuthorsController < BaseController
+
+  before_action :find_current_author, only: [:update, :show, :detach_book, :attach_book]
+
   def index
     @all_authors_count = Author.count
     @authors = Author.includes(:books).offset(offset).limit(PER_PAGE).with_attached_images
@@ -8,9 +11,6 @@ class AuthorsController < BaseController
   end
 
   def show
-    @author = Author.find_by id: params[:id]
-    return render_not_found id: params[:id] if @author.nil? 
-
     render json: {author: AuthorModelView.render(@author)}
   end
 
@@ -27,9 +27,6 @@ class AuthorsController < BaseController
   end
 
   def update
-    @author = Author.find_by id: params[:id]    
-    return render_not_found id: params[:id] if @author.nil? 
-
     if @author.update(edition_params)
       render json: {author: AuthorModelView.render(@author)}
     else
@@ -37,13 +34,32 @@ class AuthorsController < BaseController
     end
   end
 
+  def detach_book
+    @author.books.delete(params[:book_id])
+    render json: {author: AuthorModelView.render(@author)}
+  end
+
+  def attach_book
+    if !@author.books.exists?(params[:book_id])
+      book = Book.find params[:book_id]
+      @author.books << book
+    end
+    render json: {author: AuthorModelView.render(@author)}
+  end
+
   private 
+
+    def find_current_author
+      @author = Author.find_by id: params[:id]    
+      return render_not_found id: params[:id] if @author.nil? 
+    end
+
     def author_params
       params.permit(:name, :bio, :birth_date, :images, book_ids: [])
     end
 
     def edition_params
-      author_params
+      author_params.except(:book_ids)
     end
 
     def creation_params

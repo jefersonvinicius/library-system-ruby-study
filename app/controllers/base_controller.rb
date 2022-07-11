@@ -24,7 +24,7 @@ class BaseController < ApplicationController
 
   def render_not_found(args = nil)
     data = args.nil? ? nil : args.map{ |k,v| "#{k} = #{v}"}.join(", ")
-    message = data.nil? ? "Model not found" : "Not found author with #{data}" 
+    message = data.nil? ? "Model not found" : "Not found #{self.class.to_s.sub! 'Controller', ''} with #{data}" 
     render json: {message: message}, status: :not_found
   end
 end
