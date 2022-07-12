@@ -1,8 +1,7 @@
 class BooksController < BaseController
-  before_action :set_current_book, only: [:show]
+  before_action :set_current_book, only: [:show, :update, :attach_author, :detach_author]
 
   def index
-    @page = params.fetch(:page, 1).to_i
     @all_books_count = Book.count
     @books = Book.includes(:authors).offset(offset).limit(PER_PAGE).with_attached_images
 
@@ -25,6 +24,29 @@ class BooksController < BaseController
     render json: {book: BookModelView.render(@book)}
   end
 
+  def update
+    if @book.update(edition_params)
+      render json: {book: BookModelView.render(@book)}
+    else
+      render status: :unprocessable_entity
+    end
+  end
+
+  def attach_author
+    if !@book.authors.exists?(params[:author_id])
+      author = Author.find_by id: params[:author_id]
+      @book.authors << author  
+    end
+    render json: {book: BookModelView.render(@book)}
+  end
+
+  def detach_author
+    if @book.authors.exists? params[:author_id]
+      @book.authors.delete(params[:author_id])
+    end
+    render json: {book: BookModelView.render(@book)}
+  end
+
   private 
 
     def set_current_book
@@ -34,5 +56,9 @@ class BooksController < BaseController
 
     def book_params
       params.permit(:title, :description, :released_at, :edition, :images)
+    end
+
+    def edition_params
+      book_params.except(:images)
     end
 end

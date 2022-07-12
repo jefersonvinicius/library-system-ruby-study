@@ -8,7 +8,10 @@ Rails.application.routes.draw do
     scope'v1' do
       get 'books', to: 'books#index'
       get 'books/:id', to: 'books#show'
+      put 'books/:id', to: 'books#update'
       post 'books', to: 'books#create'
+      post 'books/:id/authors/:author_id', to: 'books#attach_author'
+      delete 'books/:id/authors/:author_id', to: 'books#detach_author'
 
       get 'authors', to: 'authors#index'
       get 'authors/:id', to: 'authors#show'
