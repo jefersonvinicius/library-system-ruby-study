@@ -1,6 +1,6 @@
 class AuthorsController < BaseController
 
-  before_action :find_current_author, only: [:update, :show, :detach_book, :attach_book]
+  before_action :set_current_author, only: [:update, :show, :detach_book, :attach_book]
 
   def index
     @all_authors_count = Author.count
@@ -49,7 +49,7 @@ class AuthorsController < BaseController
 
   private 
 
-    def find_current_author
+    def set_current_author
       @author = Author.find_by id: params[:id]    
       return render_not_found id: params[:id] if @author.nil? 
     end

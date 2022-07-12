@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   scope'api' do
     scope'v1' do
       get 'books', to: 'books#index'
+      get 'books/:id', to: 'books#show'
       post 'books', to: 'books#create'
 
       get 'authors', to: 'authors#index'
