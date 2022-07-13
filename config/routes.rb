@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   # root "articles#index"
   scope'api' do
     scope'v1' do
+      post 'admins/signup', to: 'users#signup_admin'
+
       get 'books', to: 'books#index'
       get 'books/:id', to: 'books#show'
       put 'books/:id', to: 'books#update'

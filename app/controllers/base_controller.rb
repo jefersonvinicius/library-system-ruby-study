@@ -24,7 +24,13 @@ class BaseController < ApplicationController
 
   def render_not_found(args = nil)
     data = args.nil? ? nil : args.map{ |k,v| "#{k} = #{v}"}.join(", ")
-    message = data.nil? ? "Model not found" : "Not found #{self.class.to_s.sub! 'Controller', ''} with #{data}" 
+    message = data.nil? ? "Model not found" : "Not found #{(self.class.to_s.sub! 'Controller', '').singularize} with #{data}" 
     render json: {message: message}, status: :not_found
+  end
+
+  def render_already_exists(**args)
+    data = args.nil? ? nil : args.map{ |k,v| "#{k} = #{v}"}.join(", ")
+    message = "#{(self.class.to_s.sub! 'Controller', '').singularize} with #{data} already exists"
+    render json: {message: message}, status: :conflict
   end
 end
