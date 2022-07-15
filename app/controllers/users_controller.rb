@@ -3,16 +3,12 @@ class UsersController < BaseController
     include BCrypt
 
     def signup_admin
-        @user_exists = User.find_by email: signup_params[:email]
-        return render_already_exists email: signup_params[:email] unless @user_exists.nil?
- 
-        @user = User.new(admin_signup_params)
-        @access_token = Jwt.sign_user(@user)
-        if @user.save
-            render json: {user: UserModelView.render(@user), access_token: @access_token}
-        else
-            render status: :unprocessable_entity
-        end
+        signup role: User::ADMIN_ROLE
+    end
+
+
+    def signup_reader
+        signup role: User::READER_ROLE
     end
 
     def login
@@ -23,15 +19,25 @@ class UsersController < BaseController
         render json: {user: UserModelView.render(@user), access_token: @access_token}
     end
 
-
     private
+
+        def signup(role:) 
+            final_params = signup_params.merge({role: role, password: Password.create(signup_params[:password])})
+
+            @user_exists = User.find_by email: final_params[:email]
+            return render_already_exists email: final_params[:email] unless @user_exists.nil?
+    
+            @user = User.new(final_params)
+            @access_token = Jwt.sign_user(@user)
+            if @user.save
+                render json: {user: UserModelView.render(@user), access_token: @access_token}
+            else
+                render status: :unprocessable_entity
+            end
+        end
 
         def is_unauthorized
             @user.nil? || Password.new(@user.password) != login_params[:password]
-        end
-
-        def admin_signup_params
-            signup_params.merge(role: User::ADMIN_ROLE, password: Password.create(signup_params[:password]))
         end
 
         def signup_params

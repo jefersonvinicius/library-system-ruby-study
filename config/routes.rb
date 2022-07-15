@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   scope'api' do
     scope'v1' do
       post 'admins/signup', to: 'users#signup_admin'
+      post 'readers/signup', to: 'users#signup_reader'
       post 'login', to: 'users#login'
 
       get 'books', to: 'books#index'
