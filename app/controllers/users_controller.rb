@@ -1,4 +1,4 @@
-class UsersController < BaseController
+class UsersController < ApplicationController
 
     include BCrypt
 
@@ -22,8 +22,11 @@ class UsersController < BaseController
     private
 
         def signup(role:) 
-            final_params = signup_params.merge({role: role, password: Password.create(signup_params[:password])})
-
+            final_params = signup_params.merge({
+                role: role,
+                password: Password.create(signup_params[:password])
+            })
+            
             @user_exists = User.find_by email: final_params[:email]
             return render_already_exists email: final_params[:email] unless @user_exists.nil?
     

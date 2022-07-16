@@ -1,4 +1,5 @@
-class BooksController < BaseController
+class BooksController < ApplicationController
+  before_action :auth_admin
   before_action :set_current_book, only: [:show, :update, :attach_author, :detach_author]
 
   def index
