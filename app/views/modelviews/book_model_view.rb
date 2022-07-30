@@ -10,7 +10,8 @@ class BookModelView
     end
 
     def parse
-        @book.as_json(include: [:authors]).tap do |result|
+        @book.as_json().tap do |result|
+            result[:authors] = AuthorsModelView.render(@book.authors) if @book.authors.loaded? 
             result[:images] = images
         end
     end

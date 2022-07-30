@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       post 'authors/:id/books/:book_id', to: 'authors#attach_book'
 
       post 'users/:user_id/books/:book_id', to: 'borrowing#borrow'
+      get 'users/:user_id/borrowings', to: 'borrowing#index_user_borrowings'
     end
   end
 end

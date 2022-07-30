@@ -19,7 +19,6 @@ RSpec.describe "BorrowingModelView" do
             user_id: nil,
             :book => {
                 id: nil, 
-                authors: [], 
                 created_at: nil, 
                 description: nil,
                 edition: nil, 
