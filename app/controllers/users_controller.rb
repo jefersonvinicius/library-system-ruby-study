@@ -22,20 +22,17 @@ class UsersController < ApplicationController
     private
 
         def signup(role:) 
-            final_params = signup_params.merge({
-                role: role,
-                password: Password.create(signup_params[:password])
-            })
+            final_params = signup_params.merge({ role: role })
             
             @user_exists = User.find_by email: final_params[:email]
             return render_already_exists email: final_params[:email] unless @user_exists.nil?
     
             @user = User.new(final_params)
-            @access_token = Jwt.sign_user(@user)
             if @user.save
+                @access_token = Jwt.sign_user(@user)
                 render json: {user: UserModelView.render(@user), access_token: @access_token}
             else
-                render status: :unprocessable_entity
+                render json: {errors: @user.errors}, status: :unprocessable_entity
             end
         end
 

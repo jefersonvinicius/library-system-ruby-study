@@ -23,6 +23,8 @@ Rails.application.routes.draw do
       put 'authors/:id', to: 'authors#update'
       delete 'authors/:id/books/:book_id', to: 'authors#detach_book'
       post 'authors/:id/books/:book_id', to: 'authors#attach_book'
+
+      post 'users/:user_id/books/:book_id', to: 'borrowing#borrow'
     end
   end
 end

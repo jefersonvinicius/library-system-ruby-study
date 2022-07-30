@@ -6,12 +6,12 @@ class ApplicationController < ActionController::API
     def make_meta(total_records:)
         @total_pages = (total_records / PER_PAGE).ceil + 1
         return {
-        first_page: [0, 1].include?(current_page),
-        last_page: current_page >= @total_pages,
-        total_pages: @total_pages,
-        page: current_page,
-        total_records: total_records,
-        per_page: PER_PAGE
+            first_page: [0, 1].include?(current_page),
+            last_page: current_page >= @total_pages,
+            total_pages: @total_pages,
+            page: current_page,
+            total_records: total_records,
+            per_page: PER_PAGE
         }
     end
 
@@ -23,9 +23,9 @@ class ApplicationController < ActionController::API
         (current_page - 1) * PER_PAGE
     end
 
-    def render_not_found(args = nil)
+    def render_not_found(model, args = nil)
         data = args.nil? ? nil : args.map{ |k,v| "#{k} = #{v}"}.join(", ")
-        message = data.nil? ? "Model not found" : "Not found #{(self.class.to_s.sub! 'Controller', '').singularize} with #{data}" 
+        message = data.nil? ? "#{model.to_s} not found" : "Not found #{model.to_s} with #{data}" 
         render json: {message: message}, status: :not_found
     end
 
@@ -49,10 +49,12 @@ class ApplicationController < ActionController::API
         def auth_jwt
             return render json: {message: 'Token not provided'}, status: :unauthorized if @token.nil?
             return render json: {message: 'Forbidden'}, status: :forbidden if @token_decoded.nil?
+            nil
         end
 
         def auth_admin
-            auth_jwt
+            result = auth_jwt
+            return result if !result.nil?
             return render json: {message: 'You aren\'t an admin'}, status: :forbidden if !@token_decoded.is_admin
         end
 end
