@@ -22,6 +22,6 @@ class AuthorModelView
 
     private
         def images
-            @author.images.map { |image| url_for(image) }
+            @author.images.map { |image| {id: image.id, url: url_for(image)} }
         end
 end

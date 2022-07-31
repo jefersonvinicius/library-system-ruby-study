@@ -17,7 +17,7 @@ class BooksController < ApplicationController
     if @book.save
       render json: {book: BookModelView.render(@book)}
     else 
-      render status: :unprocessable_entity
+      render json: {errors: @book.errors} status: :unprocessable_entity
     end
   end
 

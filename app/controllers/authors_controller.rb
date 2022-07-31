@@ -1,6 +1,6 @@
 class AuthorsController < ApplicationController
   before_action :auth_admin
-  before_action :set_current_author, only: [:update, :show, :detach_book, :attach_book]
+  before_action :set_current_author, only: [:update, :show, :detach_book, :attach_book, :attach_image, :detach_image]
 
   def index
     @all_authors_count = Author.count
@@ -45,6 +45,23 @@ class AuthorsController < ApplicationController
       @author.books << book
     end
     render json: {author: AuthorModelView.render(@author)}
+  end
+
+  def attach_image
+    @author.images.attach(params[:image]) 
+
+    if @author.save
+      render json: {author: AuthorModelView.render(@author)}
+    else
+      render json: {errors: @author.errors}, status: :unprocessable_entity
+    end
+  end
+
+  def detach_image
+    image = @author.images.find_by id: params[:image_id]
+    return render_not_found 'Image', image_id: params[:image_id] if image.nil?
+
+    image.purge
   end
 
   private 
