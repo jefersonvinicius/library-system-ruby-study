@@ -28,7 +28,7 @@ Rails.application.routes.draw do
 
       post 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#borrow'
       get 'borrowings/users/:user_id', to: 'borrowing#index_user_borrowings'
-      delete 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#give_back_book'
+      put 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#give_back_book'
     end
   end
 end
