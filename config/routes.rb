@@ -24,8 +24,9 @@ Rails.application.routes.draw do
       delete 'authors/:id/books/:book_id', to: 'authors#detach_book'
       post 'authors/:id/books/:book_id', to: 'authors#attach_book'
 
-      post 'users/:user_id/books/:book_id', to: 'borrowing#borrow'
-      get 'users/:user_id/borrowings', to: 'borrowing#index_user_borrowings'
+      post 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#borrow'
+      get 'borrowings/users/:user_id', to: 'borrowing#index_user_borrowings'
+      delete 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#give_back_book'
     end
   end
 end
