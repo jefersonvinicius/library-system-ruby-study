@@ -6,12 +6,16 @@ class BookModelView
     end
 
     def self.render(book)
-        new(book).parse
+        new(book).render
+    end
+    
+    def self.render_many(books) 
+        books.map { |book| new(book).render }
     end
 
-    def parse
+    def render
         @book.as_json().tap do |result|
-            result[:authors] = AuthorsModelView.render(@book.authors) if @book.authors.loaded? 
+            result[:authors] = AuthorModelView.render_many(@book.authors) if @book.authors.loaded? 
             result[:images] = images
         end
     end

@@ -7,7 +7,7 @@ class BooksController < ApplicationController
     @books = Book.includes(:authors).offset(offset).limit(PER_PAGE).with_attached_images
 
     @meta = make_meta total_records: @all_books_count
-    render json: {books: BooksModelView.render(@books), meta: @meta}
+    render json: {books: BookModelView.render_many(@books), meta: @meta}
   end
 
   def create
@@ -51,7 +51,7 @@ class BooksController < ApplicationController
   private 
 
     def set_current_book
-      @book = Book.find_by id: params[:id]
+      @book = Book.includes(:authors).find_by id: params[:id]
       return render_not_found id: params[:id] if @book.nil?
     end
 

@@ -7,7 +7,7 @@ class AuthorsController < ApplicationController
     @authors = Author.includes(:books).offset(offset).limit(PER_PAGE).with_attached_images
 
     @meta = make_meta total_records: @all_authors_count
-    render json: {authors: AuthorsModelView.render(@authors), meta: @meta}
+    render json: {authors: AuthorModelView.render_many(@authors), meta: @meta}
   end
 
   def show
@@ -50,7 +50,7 @@ class AuthorsController < ApplicationController
   private 
 
     def set_current_author
-      @author = Author.find_by id: params[:id]    
+      @author = Author.includes(:books).find_by id: params[:id]    
       return render_not_found id: params[:id] if @author.nil? 
     end
 
