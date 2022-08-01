@@ -1,4 +1,4 @@
-class AuthorModelView 
+class AuthorModelView < BaseModelView
     include Rails.application.routes.url_helpers
 
     def initialize(author) 
@@ -16,12 +16,7 @@ class AuthorModelView
     def render
         @author.as_json().tap do |result|
             result[:books] = BookModelView.render_many(@author.books) if @author.books.loaded?
-            result[:images] = images
+            result[:images] = render_images(@author)
         end
     end
-
-    private
-        def images
-            @author.images.map { |image| {id: image.id, url: url_for(image)} }
-        end
 end

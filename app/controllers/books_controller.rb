@@ -1,6 +1,6 @@
 class BooksController < ApplicationController
   before_action :auth_admin
-  before_action :set_current_book, only: [:show, :update, :attach_author, :detach_author]
+  before_action :set_current_book, only: [:show, :update, :attach_author, :detach_author, :attach_image, :detach_image]
 
   def index
     @all_books_count = Book.count
@@ -17,7 +17,7 @@ class BooksController < ApplicationController
     if @book.save
       render json: {book: BookModelView.render(@book)}
     else 
-      render json: {errors: @book.errors} status: :unprocessable_entity
+      render json: {errors: @book.errors}, status: :unprocessable_entity
     end
   end
 
@@ -48,11 +48,23 @@ class BooksController < ApplicationController
     render json: {book: BookModelView.render(@book)}
   end
 
+  def attach_image
+    @book.images.attach(params[:image])
+    render json: {author: BookModelView.render(@book)}
+  end
+
+  def detach_image
+    image = @book.images.find_by id: params[:image_id]
+    return render_not_found 'Image', image_id: params[:image_id] if image.nil?
+
+    image.purge
+  end
+
   private 
 
     def set_current_book
       @book = Book.includes(:authors).find_by id: params[:id]
-      return render_not_found id: params[:id] if @book.nil?
+      return render_not_found Book, id: params[:id] if @book.nil?
     end
 
     def book_params
