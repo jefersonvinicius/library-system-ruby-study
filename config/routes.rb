@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       delete 'books/:id/authors/:author_id', to: 'books#detach_author'
       post 'books/:id/images', to: 'books#attach_image'
       delete 'books/:id/images/:image_id', to: 'books#detach_image'
+      put 'books/:id/images/:image_id/sort/:index', to: 'books#sort_image'
 
       get 'authors', to: 'authors#index'
       get 'authors/:id', to: 'authors#show'

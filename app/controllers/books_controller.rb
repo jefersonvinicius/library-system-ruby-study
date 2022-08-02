@@ -1,6 +1,7 @@
 class BooksController < ApplicationController
   before_action :auth_admin
-  before_action :set_current_book, only: [:show, :update, :attach_author, :detach_author, :attach_image, :detach_image]
+  before_action :set_current_book, only: [:show, :update, :attach_author, :detach_author, :attach_image, :detach_image, :sort_image]
+  before_action :set_image, only: [:sort_image, :detach_image]
 
   def index
     @all_books_count = Book.count
@@ -22,6 +23,7 @@ class BooksController < ApplicationController
   end
 
   def show
+    @book.images.order(:position)
     render json: {book: BookModelView.render(@book)}
   end
 
@@ -55,17 +57,25 @@ class BooksController < ApplicationController
   end
 
   def detach_image
-    image = @book.images.find_by id: params[:image_id]
-    return render_not_found 'Image', image_id: params[:image_id] if image.nil?
+    @book.purge_positioned(@image)
+  end
 
-    @book.purge_positioned(image)
+  def sort_image
+    changed = Sorting.sort models: @book.images, changing: @image, to: params[:index].to_i
+    ApplicationRecord.save_many(changed)
+    render json: {book: BookModelView.render(@book)}
   end
 
   private 
 
     def set_current_book
-      @book = Book.includes(:authors).find_by id: params[:id]
+      @book = Book.with_attached_images.includes(:authors).find_by id: params[:id]
       return render_not_found Book, id: params[:id] if @book.nil?
+    end
+
+    def set_image
+      @image = @book.images.find_by id: params[:image_id]
+      return render_not_found 'Image', image_id: params[:image_id] if @image.nil?
     end
 
     def book_params
