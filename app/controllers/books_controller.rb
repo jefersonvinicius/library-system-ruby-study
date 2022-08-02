@@ -49,7 +49,8 @@ class BooksController < ApplicationController
   end
 
   def attach_image
-    @book.images.attach(params[:image])
+    @book.attach_positioned(params[:image])
+    
     render json: {author: BookModelView.render(@book)}
   end
 
@@ -57,7 +58,7 @@ class BooksController < ApplicationController
     image = @book.images.find_by id: params[:image_id]
     return render_not_found 'Image', image_id: params[:image_id] if image.nil?
 
-    image.purge
+    @book.purge_positioned(image)
   end
 
   private 

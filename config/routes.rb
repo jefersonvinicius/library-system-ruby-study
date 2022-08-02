@@ -31,6 +31,8 @@ Rails.application.routes.draw do
       post 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#borrow'
       get 'borrowings/users/:user_id', to: 'borrowing#index_user_borrowings'
       put 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#give_back_book'
+
+      get 'test/:image_id', to: 'tests#test'
     end
   end
 end
