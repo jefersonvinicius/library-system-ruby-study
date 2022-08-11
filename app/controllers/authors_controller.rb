@@ -48,7 +48,7 @@ class AuthorsController < ApplicationController
   end
 
   def attach_image
-    @author.images.attach(params[:image]) 
+    @author.attach_positioned(params[:image])
 
     if @author.save
       render json: {author: AuthorModelView.render(@author)}
@@ -61,7 +61,7 @@ class AuthorsController < ApplicationController
     image = @author.images.find_by id: params[:image_id]
     return render_not_found 'Image', image_id: params[:image_id] if image.nil?
 
-    image.purge
+    @author.purge_positioned(image)
   end
 
   private 

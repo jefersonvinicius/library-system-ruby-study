@@ -29,6 +29,6 @@ module LibrarySystemRubyStudy
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    routes.default_url_options = {host: 'localhost:3000'}
+    routes.default_url_options = {host: 'localhost:3010'}
   end
 end
