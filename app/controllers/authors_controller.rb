@@ -1,6 +1,7 @@
 class AuthorsController < ApplicationController
   before_action :auth_admin
-  before_action :set_current_author, only: [:update, :show, :detach_book, :attach_book, :attach_image, :detach_image]
+  before_action :set_current_author, only: [:update, :show, :detach_book, :attach_book, :attach_image, :detach_image, :sort_image]
+  before_action :set_image, only: [:detach_image, :sort_image]
 
   def index
     @all_authors_count = Author.count
@@ -58,10 +59,13 @@ class AuthorsController < ApplicationController
   end
 
   def detach_image
-    image = @author.images.find_by id: params[:image_id]
-    return render_not_found 'Image', image_id: params[:image_id] if image.nil?
+    @author.purge_positioned(@image)
+  end
 
-    @author.purge_positioned(image)
+  def sort_image
+    changed = Sorting.sort models: @author.images, changing: @image, to: params[:index].to_i
+    ApplicationRecord.save_many(changed)
+    render json: {book: AuthorModelView.render(@author)}
   end
 
   private 
@@ -69,6 +73,11 @@ class AuthorsController < ApplicationController
     def set_current_author
       @author = Author.includes(:books).find_by id: params[:id]    
       return render_not_found id: params[:id] if @author.nil? 
+    end
+
+    def set_image
+      @image = @author.images.find_by id: params[:image_id]
+      return render_not_found 'Image', image_id: params[:image_id] if @image.nil?
     end
 
     def author_params

@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       post 'authors/:id/books/:book_id', to: 'authors#attach_book'
       post 'authors/:id/images', to: 'authors#attach_image'
       delete 'authors/:id/images/:image_id', to: 'authors#detach_image'
+      put 'authors/:id/images/:image_id/sort/:index', to: 'authors#sort_image'
 
       post 'borrowings/users/:user_id/books/:book_id', to: 'borrowings#borrow'
       get 'borrowings/users/:user_id', to: 'borrowing#index_user_borrowings'
