@@ -1,6 +1,9 @@
 class AuthorsController < ApplicationController
   before_action :auth_admin
-  before_action :set_current_author, only: [:update, :show, :detach_book, :attach_book, :attach_image, :detach_image, :sort_image]
+  before_action :set_current_author, only: [
+    :update, :show, :detach_book, :attach_book,
+    :attach_image, :detach_image, :sort_image, :destroy
+  ]
   before_action :set_image, only: [:detach_image, :sort_image]
 
   def index
@@ -35,6 +38,12 @@ class AuthorsController < ApplicationController
     end
   end
 
+  def destroy
+    @author.destroy
+
+    render status: :no_content
+  end
+
   def detach_book
     @author.books.delete(params[:book_id])
     render json: {author: AuthorModelView.render(@author)}
@@ -52,6 +61,7 @@ class AuthorsController < ApplicationController
     @author.attach_positioned(params[:image])
 
     if @author.save
+      binding.pry
       render json: {author: AuthorModelView.render(@author)}
     else
       render json: {errors: @author.errors}, status: :unprocessable_entity
