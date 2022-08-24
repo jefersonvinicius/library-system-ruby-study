@@ -61,7 +61,6 @@ class AuthorsController < ApplicationController
     @author.attach_positioned(params[:image])
 
     if @author.save
-      binding.pry
       render json: {author: AuthorModelView.render(@author)}
     else
       render json: {errors: @author.errors}, status: :unprocessable_entity
@@ -75,7 +74,7 @@ class AuthorsController < ApplicationController
   def sort_image
     changed = Sorting.sort models: @author.images, changing: @image, to: params[:index].to_i
     ApplicationRecord.save_many(changed)
-    render json: {book: AuthorModelView.render(@author)}
+    render json: {author: AuthorModelView.render(@author)}
   end
 
   private 

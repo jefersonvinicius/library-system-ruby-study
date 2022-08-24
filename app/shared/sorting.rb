@@ -5,12 +5,9 @@ class Sorting
         changing_model = models.find { |model| model.id == changing.id }
         return [] if changing_model.position == to 
                      
-
-        self.fill_nil_positions(models)
-        # binding.pry
+        self.fill_nil_positions(models)    
         sorted = models.sort_by(&:position)
-        # binding.pry
-
+    
         target_model = sorted[to]
         
         is_sorting_to_ahead = to > changing_model.position
@@ -25,9 +22,9 @@ class Sorting
         return [changing_model, *to_update]
     end
 
-    def self.fill_nil_positions(items) 
-        items_with_nil_positions = items.select { |item| item.position.nil? }
-        index = items.length - items_with_nil_positions.length
+    def self.fill_nil_positions(positionable_items) 
+        items_with_nil_positions = positionable_items.select { |item| item.position.nil? }
+        index = positionable_items.length - items_with_nil_positions.length
         items_with_nil_positions.each do |item|
             item.position = index
             index += 1

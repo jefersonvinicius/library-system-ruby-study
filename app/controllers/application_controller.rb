@@ -4,7 +4,7 @@ class ApplicationController < ActionController::API
     PER_PAGE = 5
   
     def make_meta(total_records:)
-        @total_pages = (total_records / PER_PAGE).ceil + 1
+        @total_pages = (total_records.to_f / PER_PAGE).ceil
         return {
             first_page: [0, 1].include?(current_page),
             last_page: current_page >= @total_pages,

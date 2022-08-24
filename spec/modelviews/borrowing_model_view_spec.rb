@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe "BorrowingModelView" do
-    it "should return correctly with user and book" do
+RSpec.describe 'BorrowingModelView' do
+    it 'should return correctly with user and book' do
         user = User.new(name: 'Any name')
         book = Book.new(title: 'Any title')
         borrowing = Borrowing.new_for user: user, book: book
