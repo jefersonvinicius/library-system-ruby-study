@@ -9,14 +9,17 @@ class ApplicationRecord < ActiveRecord::Base
 
   def attach_positioned(*attachable)
     self.images.attach(attachable)
+    images_with_position = self.images.select { |image| image.position.present? }
     new_image = self.images.last
-    new_image.position = self.images.length - 1
+    new_image.position = [0, images_with_position.length - 1].max
     new_image.save
   end
 
   def purge_positioned(image_purging)
     image_purging.purge
-    biggest = self.images.select { |image| image.position > image_purging.position}
+    return if image_purging.position.nil?
+
+    biggest = self.images.select { |image| image.position.present? && image.position > image_purging.position}
     biggest.each { |image| image.position -= 1 }
     self.class.save_many(biggest)
   end
